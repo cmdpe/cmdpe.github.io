@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>体育数据分析</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            scroll-behavior: smooth;
+        }
+
+        /* 顶部导航 */
+        .top-nav {
+            background-color: #2e7d32;
+            color: white;
+            padding: 8px 20px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .top-nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 18px;
+            transition: opacity 0.2s;
+        }
+        .top-nav a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        /* 头部 banner */
+        .header-banner {
+            background: linear-gradient(135deg, #c8e6c9, #e8f5e9);
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .header-banner h1 {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: #1b5e20;
+        }
+        .header-banner .subtitle {
+            font-size: 14px;
+            color: #2c3e2f;
+            margin-bottom: 20px;
+        }
+        .btn-detail {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn-detail:hover {
+            background-color: #1b5e20;
+            transform: scale(1.02);
+        }
+
+        /* 通用区块 */
+        .section {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+        .section h2 {
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 30px;
+            color: #1b3b1a;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .section h2:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: #2e7d32;
+            margin: 10px auto 0;
+            border-radius: 3px;
+        }
+
+        /* 项目概述 */
+        .project-overview {
+            background: white;
+            padding: 24px 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            font-size: 14px;
+            line-height: 1.7;
+            color: #2c3e2f;
+        }
+        .project-overview p {
+            margin-bottom: 12px;
+        }
+
+        /* 团队成员网格 */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);  /* 固定5列，每列等宽 */
+            gap: 28px;
+            margin-top: 10px;
+        }
+
+        /* 当屏幕宽度小于 1100px 时，让卡片自动换行，避免过于拥挤 */
+        @media (max-width: 1100px) {
+            .team-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
+        }
+        .team-card {
+            background: white;
+            border-radius: 28px;
+            padding: 24px 16px 20px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .team-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        /* 圆形头像容器 + 彩色小光圈 */
+        .avatar-wrapper {
+            width: 128px;
+            height: 128px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s;
+        }
+        .team-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            background-color: #eef2f0;
+            transition: transform 0.2s;
+        }
+        /* 不同卡片的不同彩色光圈 (环绕图片的多层彩色光晕) */
+        .team-card.green .avatar-wrapper {
+            box-shadow: 0 0 0 4px #43a047, 0 0 0 8px rgba(67,160,71,0.3), 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .team-card.orange .avatar-wrapper {
+            box-shadow: 0 0 0 4px #fb8c00, 0 0 0 8px rgba(251,140,0,0.3), 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .team-card.blue .avatar-wrapper {
+            box-shadow: 0 0 0 4px #1e88e5, 0 0 0 8px rgba(30,136,229,0.3), 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .team-card.purple .avatar-wrapper {
+            box-shadow: 0 0 0 4px #8e24aa, 0 0 0 8px rgba(142,36,170,0.3), 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .team-card.yellow .avatar-wrapper {
+            box-shadow: 0 0 0 4px #fbc02d, 0 0 0 8px rgba(251,192,45,0.35), 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .team-card .info {
+            font-size: 13px;
+            line-height: 1.55;
+            color: #2d3e2c;
+            text-align: center;
+            margin-top: 8px;
+        }
+        .team-card .info strong {
+            font-size: 18px;
+            color: #1f3b1e;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .team-card .info br {
+            margin-bottom: 4px;
+        }
+
+        /* 技术栈 */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 24px;
+        }
+        .tech-card {
+            background: white;
+            border-radius: 28px;
+            padding: 22px 20px;
+            min-width: 180px;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+            border-bottom: 3px solid;
+        }
+        .tech-card h4 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        .tech-card p {
+            font-size: 13px;
+            color: #555;
+        }
+
+        /* 成果展示区域 */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .result-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            transition: 0.2s;
+        }
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+        .result-placeholder {
+            background-color: #f5f7f5;
+            min-height: 230px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        .result-placeholder img {
+            max-width: 100%;
+            max-height: 200px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 12px;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .result-placeholder img:hover {
+            transform: scale(1.02);
+        }
+        .result-desc {
+            padding: 18px 20px;
+            font-size: 14px;
+            line-height: 1.5;
+            background: #ffffff;
+        }
+        .result-desc strong {
+            color: #2e7d32;
+            font-size: 16px;
+        }
+
+        /* 页脚 */
+        footer {
+            background-color: #1f2f1e;
+            color: #ccc;
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            margin-top: 40px;
+        }
+        footer p {
+            margin: 5px 0;
+        }
+
+        /* 响应式 */
+        @media (max-width: 780px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .team-grid {
+                gap: 20px;
+            }
+            .avatar-wrapper {
+                width: 110px;
+                height: 110px;
+            }
+            .header-banner h1 {
+                font-size: 24px;
+            }
+        }
+        @media (max-width: 480px) {
+            .top-nav {
+                flex-direction: column;
+                gap: 6px;
+            }
+            .top-nav div a {
+                margin: 0 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="top-nav">
+        <span>RPA+Excel+FineBI 项目展示</span>
+    </div>
+
+    <!-- 头部 banner -->
+    <div class="header-banner">
+        <h1>体育数据分析--2025-2026赛季CBA联赛综合数据分析</h1>
+        <div class="subtitle">SUS · 计算机大作业 · 2026年度</div>
+        <button class="btn-detail" onclick="alert('着职业篮球联赛（CBA）竞技水平的不断提升，球队和球员的技术运用数据已成为战术分析与比赛决策的核心依据。然而，当前多数技术统计仍停留在基础得分、篮板、助攻等表层指标，缺乏对“技术动作细分类别”（如三分球、内线、反击、失误、封盖、关键球等）的深度挖掘，也难以直观呈现不同位置球员（控球后卫、锋线、中锋等）的贡献差异。')">查看详情</button>
+    </div>
+
+    <!-- 项目概述 -->
+    <div class="section">
+        <h2>项目概述</h2>
+        <div class="project-overview">
+            <p><strong>项目背景：</strong> 随着职业篮球联赛（CBA）竞技水平的不断提升，球队和球员的技术运用数据已成为战术分析与比赛决策的核心依据。然而，当前多数技术统计仍停留在基础得分、篮板、助攻等表层指标，缺乏对“技术动作细分类别”（如三分球、内线、反击、失误、封盖、关键球等）的深度挖掘，也难以直观呈现不同位置球员（控球后卫、锋线、中锋等）的贡献差异。</p>
+            <p><strong>项目目标：</strong> 通过八爪鱼RPA技术实现数据获取，利用Excel做数据清洗与整理，结合FineBI进行可视化分析，网页展示CBA热门数据统计专题的体育洞察。</p>
+            <p><strong>项目意义：</strong> 整合了运动训练专业的知识，探索了AI工具在体育领域的实际应用。</p>
+        </div>
+    </div>
+
+    <!-- 团队成员 -->
+    <div class="section">
+        <h2>团队成员</h2>
+        <div class="team-grid">
+            <div class="team-card green">
+                <div class="avatar-wrapper">
+                    <img src="1.png" alt="刘述鑫" class="team-avatar" onerror="this.onerror=null; this.src='https://placehold.co/480x480/e8f0e8/2e7d32?text=刘&font=noto';">
+                </div>
+                <div class="info">
+                    <strong>刘述鑫</strong>
+                    专业：运动训练-橄榄球<br>
+                    负责：数据获取与整理、可视化图表、数据分析、报告撰写、网页制作
+                </div>
+            </div>
+            <!-- 王瑞 对应 2.png 橙色光圈 -->
+            <div class="team-card orange">
+                <div class="avatar-wrapper">
+                    <img src="2.png" alt="王瑞" class="team-avatar" onerror="this.onerror=null; this.src='https://placehold.co/480x480/fef3e7/fb8c00?text=王&font=noto';">
+                </div>
+                <div class="info">
+                    <strong>王瑞</strong>
+                    专业：运动训练-橄榄球<br>
+                    负责：报告撰写、体育竞技逻辑梳理
+                </div>
+            </div>
+            <!-- 周陈橙 对应 3.png 蓝色光圈 -->
+            <div class="team-card blue">
+                <div class="avatar-wrapper">
+                    <img src="3.png" alt="周陈橙" class="team-avatar" onerror="this.onerror=null; this.src='https://placehold.co/480x480/e6f0ff/1e88e5?text=周&font=noto';">
+                </div>
+                <div class="info">
+                    <strong>周陈橙</strong>
+                    专业：运动训练-网球<br>
+                    负责：可视化图表、FineBI仪表盘设计
+                </div>
+            </div>
+            <!-- 郭一诺 对应 4.png 紫色光圈 -->
+            <div class="team-card purple">
+                <div class="avatar-wrapper">
+                    <img src="4.png" alt="郭一诺" class="team-avatar" onerror="this.onerror=null; this.src='https://placehold.co/480x480/f9ebff/8e24aa?text=郭&font=noto';">
+                </div>
+                <div class="info">
+                    <strong>郭一诺</strong>
+                    专业：运动训练-橄榄球<br>
+                    负责：数据分析、高阶指标建模
+                </div>
+            </div>
+            <!-- 周福洋 对应 5.png 黄色光圈 -->
+            <div class="team-card yellow">
+                <div class="avatar-wrapper">
+                    <img src="5.png" alt="周福洋" class="team-avatar" onerror="this.onerror=null; this.src='https://placehold.co/480x480/fff8e7/fbc02d?text=周&font=noto';">
+                </div>
+                <div class="info">
+                    <strong>周福洋</strong>
+                    专业：运动训练-高尔夫<br>
+                    负责：数据获取与整理、网页制作与交互
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要技术 -->
+    <div class="section">
+        <h2>核心技术栈</h2>
+        <div class="tech-stack">
+            <div class="tech-card" style="border-color: #1e88e5; color: #1e88e5;">
+                <h4>RPA</h4>
+                <p>自动化流程机器人<br>实现Excel数据自动获取</p>
+            </div>
+            <div class="tech-card" style="border-color: #43a047; color: #43a047;">
+                <h4>Excel</h4>
+                <p>清洗与函数<br>指标拆解</p>
+            </div>
+            <div class="tech-card" style="border-color: #ffb300; color: #ffb300;">
+                <h4>FineBI</h4>
+                <p>智能可视化<br>拖拽式大屏与仪表盘制作</p>
+            </div>
+            <div class="tech-card" style="border-color: #26a69a; color: #26a69a;">
+                <h4>HTML/CSS</h4>
+                <p>网页制作<br>长期展示与分享</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 项目成果展示 -->
+    <div class="section">
+        <h2>项目成果展示</h2>
+        <div class="results-grid">
+            <div class="result-card">
+                <div class="result-placeholder" style="background-color: #FFFFFF; display: flex; align-items: center; justify-content: center;">
+                    <img src="finebi_dashboard.png" alt="FineBI仪表盘截图" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;">
+                </div>
+                <div class="result-desc">
+                    <strong>FineBI 数据可视化大屏</strong><br>
+                    展示数据的对比分析，如雷达图、热力图等各种组件图片。<a href="https://demo.fanruan.com/webroot/decision/v5/design/report/df09499997b74556bcd1348627758bb2/view" target="_blank">点此查看</a>
+                </div>
+            </div>
+            <div class="result-card">
+                <div class="result-placeholder" style="background-color: #FFFFFF; display: flex; align-items: center; justify-content: center;">
+                    <img src="rpa_workflow.png" alt="RPA自动化流程" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;">
+                </div>
+                <div class="result-desc">
+                    <strong>RPA 自动化流程演示</strong><br>
+                    实现数据大量自动化获取。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <p>© 2026 SUS | 2025级运训6班第5小组 | 版权所有</p>
+        <p> 课程：计算机应用基础（2）</p>
+    </footer>
+    <!-- 点击图片放大模态框 -->
+    <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); z-index:9999; text-align:center; overflow:auto;">
+        <span id="closeModal" style="position:absolute; top:20px; right:40px; color:white; font-size:40px; font-weight:bold; cursor:pointer;">&times;</span>
+        <img id="modalImage" style="max-width:90%; max-height:90%; margin-top:5%; box-shadow:0 0 20px rgba(0,0,0,0.5);">
+    </div>
+    <script>
+        // 获取所有成果展示区内的图片
+        const images = document.querySelectorAll('.result-placeholder img');
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        const closeBtn = document.getElementById('closeModal');
+
+        // 为每张图片添加点击事件
+        images.forEach(img => {
+            img.addEventListener('click', function() {
+                modal.style.display = 'block';
+                modalImg.src = this.src;          // 放大的图片使用原图地址
+            });
+        });
+
+        // 点击关闭按钮关闭模态框
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        // 点击模态框背景（灰色区域）也关闭
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
